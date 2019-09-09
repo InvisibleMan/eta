@@ -1,29 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"time"
 )
 
-func TimeRequestMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		next.ServeHTTP(w, r)
-		log.Printf("Request processed by: %s.\n", time.Since(start))
-	})
-}
-
 func main() {
-	cfg := NewConfig()
-	handler := NewEtaService(cfg)
+	cfg := NewCmdConfig()
+	handler := NewEtaService(NewModel(NewSwaggerApi(cfg.Endpoint)))
 
-	log.Println("starting server at :8082")
+	log.Printf("Starting server at '%s'\n", cfg.Port)
+	log.Printf("Use endpoint:  '%s'\n", cfg.Endpoint)
+
 	handler.WarmUp()
 
 	err := http.ListenAndServe(cfg.Port, TimeRequestMiddleware(handler))
 	if err != nil {
-		fmt.Println("Listen error: ", err)
+		log.Println("Listen error: ", err)
 	}
 }

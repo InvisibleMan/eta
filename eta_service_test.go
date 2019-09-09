@@ -11,17 +11,25 @@ var (
 	clientHttp = &http.Client{Timeout: time.Second}
 )
 
+type CaseService struct {
+	Method string
+	Url    string
+	Status int
+}
+
 func TestApis(t *testing.T) {
-	handler := NewEtaService(NewConfig())
+	handler := NewEtaService(nil)
 	ts := httptest.NewServer(handler)
 
-	req, _ := http.NewRequest("GET", ts.URL, nil)
-	resp, _ := clientHttp.Do(req)
+	cases := []CaseService{
+		CaseService{Method: "GET", Url: ts.URL, Status: http.StatusNotFound},
+		CaseService{Method: "POST", Url: ts.URL + "/eta", Status: http.StatusMethodNotAllowed},
+		CaseService{Method: "GET", Url: ts.URL + "/eta", Status: http.StatusBadRequest},
+	}
 
-	equals(t, resp.StatusCode, http.StatusNotFound)
-
-	req, _ = http.NewRequest("POST", ts.URL+"/eta", nil)
-	resp, _ = clientHttp.Do(req)
-
-	equals(t, resp.StatusCode, http.StatusMethodNotAllowed)
+	for _, cs := range cases {
+		req, _ := http.NewRequest(cs.Method, cs.Url, nil)
+		resp, _ := clientHttp.Do(req)
+		equals(t, resp.StatusCode, cs.Status)
+	}
 }

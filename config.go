@@ -1,6 +1,8 @@
 package main
 
-import "net/url"
+import (
+	"flag"
+)
 
 var (
 	DEFAULT_PORT         string = ":8082"
@@ -8,16 +10,25 @@ var (
 )
 
 type Config struct {
-	Port        string
-	EtaEndpoint *url.URL
+	Port     string
+	Endpoint string
 }
 
 // NewConfig is ...
 func NewConfig() *Config {
-	url, _ := url.Parse(DEFAULT_ETA_ENDPOINT)
-
 	return &Config{
-		Port:        DEFAULT_PORT,
-		EtaEndpoint: url,
+		Port:     DEFAULT_PORT,
+		Endpoint: DEFAULT_ETA_ENDPOINT,
 	}
+}
+
+func NewCmdConfig() *Config {
+	cfg := Config{}
+
+	flag.StringVar(&cfg.Port, "listen", DEFAULT_PORT, "HTTP listen spec")
+	flag.StringVar(&cfg.Endpoint, "endpoint", DEFAULT_ETA_ENDPOINT, "Path to Todo-file")
+
+	flag.Parse()
+
+	return &cfg
 }
