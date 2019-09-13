@@ -11,4 +11,11 @@ func TestMinimum(t *testing.T) {
 
 	equals(t, idx, 4)
 	equals(t, min, in[exIdx])
+
+	in = []int64{4}
+	min, idx = m.getMinimumIn(in)
+
+	exIdx = 0
+	equals(t, idx, exIdx)
+	equals(t, min, in[exIdx])
 }

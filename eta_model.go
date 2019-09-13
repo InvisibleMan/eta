@@ -63,8 +63,8 @@ func (m *EtaModel) CarsToPredictOpts(lat float64, lng float64, cars []carsModels
 }
 
 func (m *EtaModel) getMinimumIn(mins []int64) (int64, int) {
-	var min int64 = mins[1]
 	var idx int = 0
+	var min int64 = mins[idx]
 
 	for i, m := range mins {
 		if m < min {
