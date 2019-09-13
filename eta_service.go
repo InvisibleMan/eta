@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -17,8 +18,8 @@ type EtaService struct {
 	cache Cache
 }
 
-func NewEtaService(cfg *Config) *EtaService {
-	return &EtaService{eta: NewModel(cfg), cache: NewDummyCache(100, 30)}
+func NewEtaService(model *EtaModel) *EtaService {
+	return &EtaService{eta: model, cache: NewDummyCache(100, 30)}
 }
 
 type ApiError struct {
@@ -105,5 +106,6 @@ func (s *EtaService) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s EtaService) WarmUp() {
+	log.Println("Warm up first request with default params")
 	_, _ = s.eta.Find(DEFAULT_LAT, DEFAULT_LNG, DEFAULT_LIMIT)
 }

@@ -1,0 +1,73 @@
+swagger: "2.0"
+
+info:
+  title: "Eta service"
+  version: "1.0"
+
+basePath: /
+
+produces:
+- application/json
+
+consumes: 
+- application/json
+
+paths:
+  /eta:
+    get:
+      operationId: getEta
+      description: |
+        Возвращает время подачи машины с точностью до минуты
+      parameters:
+      - name: lat
+        in: query
+        type: number
+        format: float64
+        required: true
+        minimum: -90.0
+        maximum: 90.0
+        description: Latitude
+      - name: lng
+        in: query
+        type: number
+        format: float64
+        required: true
+        minimum: -180
+        maximum: 180
+        description: Longitude
+      - name: limit
+        in: query
+        type: number
+        format: int
+        required: false
+        minimum: 1
+        maximum: 100
+        description: |
+          Number of cars requested
+
+      responses:
+        200:
+          description: Car list
+          schema: 
+            $ref: '#/definitions/eta'
+
+definitions:
+  eta:
+    type: object
+    x-nullable: false
+    required:
+      - carId
+      - minutes
+    properties:
+      carId:
+        type: number
+        format: int
+        minimum: 1
+        description: Car id
+        x-nullable: false
+      minutes:
+        type: number
+        format: int
+        minimum: 0
+        description: Minutes
+        x-nullable: false
